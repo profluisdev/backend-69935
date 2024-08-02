@@ -11,4 +11,8 @@ const userSchema = new mongoose.Schema({
 
 })
 
+userSchema.pre("findOne", function () {
+  this.populate("account");
+})
+
 export const userModel = mongoose.model(userCollection, userSchema)

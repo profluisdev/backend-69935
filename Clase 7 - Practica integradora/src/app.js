@@ -3,6 +3,8 @@ import envsConfig from "./config/envs.config.js";
 import routes from "./routes/index.routes.js";
 import passport from "passport";
 import session from "express-session";
+import cookieParser from "cookie-parser";
+
 import { connectDB } from "./config/mongoDb.config.js";
 import { initializePassport } from "./config/passport.config.js";
 
@@ -13,13 +15,15 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: "123",
-  resave: true,
-  saveUninitialized: true
-}));
+app.use(
+  session({
+    secret: "123",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
-
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 initializePassport();

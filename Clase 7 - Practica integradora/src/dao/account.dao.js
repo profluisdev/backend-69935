@@ -29,11 +29,38 @@ const depositAccount = async (query, amount) => {
   return await accountModel.findByIdAndUpdate(account._id, { balance: account.balance + amount }, { new: true });
 };
 
+const extractAccount = async (query, amount) => {
+  const account = await accountModel.findOne(query);
+  return await accountModel.findByIdAndUpdate(account._id, { balance: account.balance - amount }, { new: true });
+};
+
+const transferBalance = async (originQuery, destinationQuery, amount) => {
+  const originAccount = await accountModel.findOne(originQuery);
+  const destinationAccount = await accountModel.findOne(destinationQuery);
+
+  // descontar saldo de la cuenta de origen
+  const originAccountUpdate = await accountModel.findByIdAndUpdate(
+    originAccount._id,
+    { balance: originAccount.balance - amount },
+    { new: true }
+  );
+  // aumentar saldo cuenta de destino
+  const destinationAccountUpdate = await accountModel.findByIdAndUpdate(
+    destinationAccount._id,
+    { balance: destinationAccount.balance + amount },
+    { new: true }
+  );
+
+  return { originAccount: originAccountUpdate, destinationAccount: destinationAccountUpdate };
+};
+
 export default {
   getAll,
   getOne,
   create,
   update,
   deleteOne,
-  depositAccount
+  depositAccount,
+  extractAccount,
+  transferBalance,
 };
